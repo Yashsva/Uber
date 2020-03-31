@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#C5C3C3"
+    android:orientation="vertical"
+    tools:context=".Driver">
+
+    <TextView
+        android:id="@+id/txtRideRequests"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:background="#474646"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="Ride Requests"
+        android:textColor="#EBEAEA"
+        android:textSize="24sp" />
+
+    <Button
+        android:id="@+id/btnGetRequests"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:background="#FFFF"
+        android:text="Get Nearby Requests"
+        android:textColor="#383737" />
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <ListView
+            android:id="@+id/listView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp" />
+    </ScrollView>
+</LinearLayout>

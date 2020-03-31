@@ -65,10 +65,11 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
         {
 //            ParseUser.logOut();
 
-            Toast.makeText(this,ParseUser.getCurrentUser().getUsername()+" Logged In",Toast.LENGTH_SHORT).show();
-            Intent intent=new Intent(SignUp.this,Passenger.class);
-            startActivity(intent);
-            finish();
+//            Toast.makeText(this,ParseUser.getCurrentUser().getUsername()+" Logged In",Toast.LENGTH_SHORT).show();
+//            Intent intent=new Intent(SignUp.this,Passenger.class);
+//            startActivity(intent);
+//            finish();
+            TransitionToHomepage();
         }
 
 
@@ -167,13 +168,17 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
     public void TransitionToHomepage() {
         if (ParseUser.getCurrentUser().get("category").equals("passenger"))
         {
+            Toast.makeText(this,ParseUser.getCurrentUser().getUsername()+" Passenger Logged In",Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(SignUp.this, Passenger.class);
             startActivity(intent);
             finish();
         }
-        else
+        else  if (ParseUser.getCurrentUser().get("category").equals("driver"))
         {
-            Toast.makeText(this,"Activity for Driver is not defined yet",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,ParseUser.getCurrentUser().getUsername()+" Driver Logged In",Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(SignUp.this, Driver.class);
+            startActivity(intent);
+            finish();
         }
     }
 }

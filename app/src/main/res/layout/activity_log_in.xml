@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#011302"
+    android:background="#C5C3C3"
     android:onClick="ConstraintLayoutClicked"
     tools:context=".LogIn">
 
@@ -18,9 +18,10 @@
         android:ems="10"
         android:hint="Enter Email or Username"
         android:inputType="textPersonName"
-        android:textColor="#00FC0F"
-        android:textColorHighlight="#FFFFFF"
-        android:textColorHint="#849E84"
+        android:textColor="#000000"
+        android:textColorHighlight="#000000"
+        android:textColorHint="#EEE9E9"
+        android:textColorLink="@android:color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView2" />
@@ -35,9 +36,10 @@
         android:ems="10"
         android:hint="Enter Password"
         android:inputType="textPassword"
-        android:textColor="#00FC0F"
-        android:textColorHighlight="#FFFFFF"
-        android:textColorHint="#849E84"
+        android:textColor="#000000"
+        android:textColorHighlight="#000000"
+        android:textColorHint="#EEE9E9"
+        android:textColorLink="@android:color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edtEmailLogin" />
@@ -49,8 +51,9 @@
         android:layout_marginStart="155dp"
         android:layout_marginTop="56dp"
         android:layout_marginEnd="155dp"
-        android:background="#46C45A"
+        android:background="#474646"
         android:text="Sign Up"
+        android:textColor="#FFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnLogin" />
@@ -62,8 +65,9 @@
         android:layout_marginStart="155dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="155dp"
-        android:background="#46C45A"
+        android:background="#474646"
         android:text="Login"
+        android:textColor="#FFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edtPasswordLogin" />

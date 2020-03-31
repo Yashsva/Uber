@@ -24,6 +24,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -86,6 +87,13 @@ public class Passenger extends AppCompatActivity implements OnMapReadyCallback, 
     private  boolean isUserRiding=false;
 
 
+    private LatLng latLngDriver=null;
+    private LatLng latLngRider=null;
+
+
+    private TextView edtDriverUsername;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,6 +105,8 @@ public class Passenger extends AppCompatActivity implements OnMapReadyCallback, 
 
 
         btnRequestRide=findViewById(R.id.btnRequestRide);
+        edtDriverUsername=findViewById(R.id.edtDriverUsername);
+        edtDriverUsername.setVisibility(View.GONE);
 
         btnRequestRide.setOnClickListener(this);
 
@@ -105,12 +115,19 @@ public class Passenger extends AppCompatActivity implements OnMapReadyCallback, 
         queryRideRequest.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> objects, ParseException e) {
-                if(e==null && objects.size()>0)
+                if(e==null )
                 {
-                    isUserRiding=true;
-                    btnRequestRide.setText("Cancel Ride");
+
+                    if(objects.size()>0) {
+                        isUserRiding = true;
+                        btnRequestRide.setText("Cancel Ride");
+                        startSearchForDriver();
+                    }
 
                 }
+                else
+                Toast.makeText(Passenger.this,"Error : "+e.getMessage(),Toast.LENGTH_SHORT).show();
+
             }
         });
     }
@@ -138,6 +155,12 @@ public class Passenger extends AppCompatActivity implements OnMapReadyCallback, 
             @Override
             public void onLocationChanged(Location location) {
 
+                Toast.makeText(Passenger.this,"Location Changed",Toast.LENGTH_SHORT).show();
+                if(latLngDriver!=null && latLngRider!=null)
+                {
+                    showLocationOfDriverAndRiderOnMap();
+                }
+                else
                 updateCameraPassengerLocation(location);
 
 
@@ -162,6 +185,11 @@ public class Passenger extends AppCompatActivity implements OnMapReadyCallback, 
         if (Build.VERSION.SDK_INT < 23) {
 
             Location currentPassengerLocation = getLocation();
+            if(latLngDriver!=null && latLngRider!=null)
+            {
+                showLocationOfDriverAndRiderOnMap();
+            }
+            else
             updateCameraPassengerLocation(currentPassengerLocation);
 
 
@@ -183,6 +211,11 @@ public class Passenger extends AppCompatActivity implements OnMapReadyCallback, 
 
                 }
                 else {
+                    if(latLngDriver!=null && latLngRider!=null)
+                    {
+                        showLocationOfDriverAndRiderOnMap();
+                    }
+                    else
                     updateCameraPassengerLocation(currentPassengerLocation);
 
                 }
@@ -231,7 +264,7 @@ public class Passenger extends AppCompatActivity implements OnMapReadyCallback, 
         mMap.clear();
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(passengerLocation, 15));
 
-        mMap.addMarker(new MarkerOptions().position(passengerLocation).title("You are here!!!").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE)));
+        mMap.addMarker(new MarkerOptions().position(passengerLocation).title("You are here!!!").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 
     }
 
@@ -326,6 +359,14 @@ public class Passenger extends AppCompatActivity implements OnMapReadyCallback, 
             e.printStackTrace();
         }
 
+
+
+        if(location!=null)
+        {
+            latLngRider=new LatLng(location.getLatitude(),location.getLongitude());
+        }
+
+
         return location;
     }
 
@@ -398,7 +439,8 @@ public class Passenger extends AppCompatActivity implements OnMapReadyCallback, 
                         if(rideRequestList.size()>0 && e==null)
                         {
                             isUserRiding=false;
-                            btnRequestRide.setText("Request Ride");
+                            btnRequestRide.setText("Request   Ride");
+
 
                             for (ParseObject rideRequest:rideRequestList)
                             {
@@ -412,6 +454,9 @@ public class Passenger extends AppCompatActivity implements OnMapReadyCallback, 
                                     }
                                 });
                             }
+
+                            finish();
+                            startActivity(getIntent());
                         }
                     }
                 });
@@ -433,6 +478,7 @@ public class Passenger extends AppCompatActivity implements OnMapReadyCallback, 
 
                                 btnRequestRide.setText("Cancel Ride");
                                 isUserRiding = true;
+                                startSearchForDriver();
                             }
                         });
                     } else {
@@ -480,6 +526,110 @@ public class Passenger extends AppCompatActivity implements OnMapReadyCallback, 
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private  void startSearchForDriver()
+    {
+        if(latLngDriver==null) {
+            Log.i("location","latLngDriver is null");
+            final Timer timer = new Timer();
+            timer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+
+                    Log.i("location","timer is running");
+
+                    ParseQuery<ParseObject> querySearchDriver = new ParseQuery("rideRequest");
+                    querySearchDriver.whereEqualTo("username", ParseUser.getCurrentUser().getUsername());
+                    querySearchDriver.whereExists("driverLocLatitude");
+                    querySearchDriver.whereExists("driverLocLongitude");
+                    querySearchDriver.findInBackground(new FindCallback<ParseObject>() {
+                        @Override
+                        public void done(List<ParseObject> objects, ParseException e) {
+                            double driverLocLatitude = 0, driverLocLongitude = 0;
+
+                            if (e == null) {
+                                if (objects.size() > 0) {
+                                    String driverUsername="";
+//                                    btnRequestRide.setVisibility(View.INVISIBLE);
+                                    for (ParseObject parseObject : objects) {
+
+                                        driverLocLatitude = parseObject.getDouble("driverLocLatitude");
+                                        driverLocLongitude = parseObject.getDouble("driverLocLongitude");
+                                        driverUsername=parseObject.get("driverUsername").toString();
+                                        Toast.makeText(Passenger.this, "Your Driver  - " + driverUsername+ " is approaching you", Toast.LENGTH_SHORT).show();
+
+                                    }
+
+//                                Location riderLocation=getLocation();
+//                                LatLng latLngRider=new LatLng(riderLocation.getLatitude(),riderLocation.getLongitude());
+                                    latLngDriver = new LatLng(driverLocLatitude, driverLocLongitude);
+                                    showLocationOfDriverAndRiderOnMap();
+                                    Log.i("location","Returning");
+                                    edtDriverUsername.setText("Your Driver : "+driverUsername);
+                                    edtDriverUsername.setVisibility(View.VISIBLE);
+
+                                    timer.cancel();
+                                }
+
+                            } else
+                                Toast.makeText(Passenger.this, "Error in startSearchForDriver : " + e.getMessage(), Toast.LENGTH_SHORT).show();
+
+                        }
+                    });
+
+
+                }
+            }, 0, 5000);
+        }
+        else
+        {
+            showLocationOfDriverAndRiderOnMap();
+        }
+
+    }
+
+    private void showLocationOfDriverAndRiderOnMap() {
+
+
+        Log.i("location","Inside showLocationOfDriverAndRiderOnMap function");
+
+        try {
+            mMap.clear();
+            LatLngBounds.Builder builder=new LatLngBounds.Builder();
+
+            Log.i("location","driver : "+latLngDriver.latitude+"  "+latLngDriver.longitude+"\n    Rider : "+latLngRider.latitude+"  "+latLngRider.longitude);
+
+            Marker driverMarker=mMap.addMarker(new MarkerOptions().position(latLngDriver).title("Driver"));
+            Marker riderMarker=mMap.addMarker(new MarkerOptions().position(latLngRider).title("Rider"));
+
+            ArrayList<Marker> myMarkers=new ArrayList<>();
+            myMarkers.add(driverMarker);
+            myMarkers.add(riderMarker);
+            for (Marker marker:myMarkers)
+            {
+                builder.include(marker.getPosition());
+
+            }
+
+            LatLngBounds bounds=builder.build();
+
+
+//        int screenHeight=getResources().getDisplayMetrics().heightPixels;
+//        int screenWidth=getResources().getDisplayMetrics().widthPixels;
+//        Log.i("Screen","Screen Height : "+screenHeight+"Screen Width :  "+screenWidth);
+
+            CameraUpdate cameraUpdate=CameraUpdateFactory.newLatLngBounds(bounds,100);
+            mMap.animateCamera(cameraUpdate);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(Passenger.this,"Error : "+ e.getMessage(),Toast.LENGTH_SHORT).show();
+
+        }
+
+
+
     }
 }
 

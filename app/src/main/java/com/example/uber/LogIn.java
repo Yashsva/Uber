@@ -75,7 +75,6 @@ public class LogIn extends AppCompatActivity implements View.OnClickListener {
 
                             if(e==null)
                             {
-                                Toast.makeText(LogIn.this,user.getUsername()+" Logged In",Toast.LENGTH_SHORT).show();
 
                                 TransitionToHomepage();
 
@@ -123,13 +122,17 @@ public class LogIn extends AppCompatActivity implements View.OnClickListener {
     {
         if (ParseUser.getCurrentUser().get("category").equals("passenger"))
         {
+            Toast.makeText(this,ParseUser.getCurrentUser().getUsername()+" Passenger Logged In",Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(LogIn.this, Passenger.class);
             startActivity(intent);
             finish();
         }
-        else
+        else  if (ParseUser.getCurrentUser().get("category").equals("driver"))
         {
-            Toast.makeText(this,"Activity for Driver is not defined yet",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,ParseUser.getCurrentUser().getUsername()+" Driver Logged In",Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(LogIn.this, Driver.class);
+            startActivity(intent);
+            finish();
         }
     }
 
